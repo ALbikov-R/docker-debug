@@ -13,8 +13,8 @@ import (
 )
 
 type Data struct {
-	id       string `json:"id"`
-	lastname string `json:"lastname"`
+	Id       string `json:"id"`
+	Lastname string `json:"lastname"`
 }
 
 var (
@@ -24,8 +24,17 @@ var (
 func main() {
 	r := mux.NewRouter()
 	fmt.Println("here")
-	d, _ := sql.Open("postgres", URLDatabase())
+	d, err := sql.Open("postgres", URLDatabase())
+	if err != nil {
+		log.Fatal(err)
+	}
 	Db = d
+	_, err = Db.Exec("CREATE TABLE IF NOT EXISTS testt (ID integer, lastname varchar(255))")
+	if err != nil {
+		fmt.Println("here1")
+		log.Fatal(err)
+	}
+
 	port := os.Getenv("PORT")
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "<html><head><title>My Golang Web App</title></head><body><h1>Hello, Golang Web App!</h1></body></html>")
@@ -46,7 +55,7 @@ func GetData(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		data = append(data, Data{id: id, lastname: lname})
+		data = append(data, Data{Id: id, Lastname: lname})
 	}
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")

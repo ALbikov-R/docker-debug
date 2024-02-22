@@ -3,27 +3,28 @@ version: '3'
 services:
   postgres:
     restart: always
-    image: postgres:16.0
+    image: postgres:14.0
     environment:
-      POSTGRES_DB: productdb
+      POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
     ports:
-      - 5432:5436
+      - "5432:5432"
     volumes:
-      - /e/Postgresql/data:/var/lib/postgresql/data 
+      - ./database:/var/lib/postgresql/data 
   
   app:
+    image: francescoxx/go-app:1.0.1
     build: ./
     command: ./main
     environment:
       DB_HOST: postgres
-      DB_PORT: 5436
+      DB_PORT: 5432
       DB_USER: postgres
       DB_PASSWORD: 1234
-      DB_NAME: productdb
+      DB_NAME: postgres
       PORT: 8080
     ports:
-      - 8080:8080
+      - "8080:8080"
     depends_on: 
       - postgres
