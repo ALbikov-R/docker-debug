@@ -28,6 +28,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("here2")
 	Db = d
 	_, err = Db.Exec("CREATE TABLE IF NOT EXISTS testt (ID integer, lastname varchar(255))")
 	if err != nil {
@@ -35,15 +36,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	port := os.Getenv("PORT")
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "<html><head><title>My Golang Web App</title></head><body><h1>Hello, Golang Web App!</h1></body></html>")
 	}).Methods("GET")
 	r.HandleFunc("/getdata", GetData).Methods("GET")
-	http.ListenAndServe(port, r)
+	http.ListenAndServe(os.Getenv("PORT"), r)
 }
 func GetData(w http.ResponseWriter, r *http.Request) {
-	rows, err := Db.Query("SELECT * FROM testT")
+	rows, err := Db.Query("SELECT * FROM testt")
 	if err != nil {
 		log.Fatal(err)
 	}
